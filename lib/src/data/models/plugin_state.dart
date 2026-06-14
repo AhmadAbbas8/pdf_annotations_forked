@@ -45,6 +45,7 @@ class PluginState {
   final lineModeNotifier = ValueNotifier<LineMode>(.pen);
   final opacityValueNotifier = ValueNotifier<double>(1.0);
   final pdfOffsetNotifier = ValueNotifier<Offset>(.zero);
+  final pdfScaleNotifier = ValueNotifier<double>(1.0);
   final popInvokedNotifier = ValueNotifier<bool>(false);
   final pdfViewControllerNotifier = ValueNotifier<PDFViewController?>(null);
   final redoEnabledNotifier = ValueNotifier<bool>(false);

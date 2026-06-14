@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import '../../data/models/plugin_state.dart';
+import '../../utilities/enums.dart';
 
 typedef ViewCreatedCallback = void Function(PDFViewController controller);
 typedef RenderCallback = void Function(int? pages);
@@ -95,26 +97,40 @@ class _PdfDocViewState extends State<PdfDocView> {
   @override
   Widget build(BuildContext context) {
     final pdfPath = widget.pdfPath;
+    final pluginState = PluginStateProvider.of(context);
 
     if (pdfPath.isNotEmpty) {
-      return PDFView(
-        key: _key,
-        filePath: pdfPath,
-        defaultPage: widget.defaultPage,
-        pageFling: false,
-        pageSnap: false,
-        autoSpacing: false,
-        preventLinkNavigation: true,
-        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-          Factory<OneSequenceGestureRecognizer>(() => VerticalDragGestureRecognizer()),
+      return ValueListenableBuilder<EditMode>(
+        valueListenable: pluginState.editModeNotifier,
+        builder: (context, editMode, child) {
+          final gestureRecognizers = <Factory<OneSequenceGestureRecognizer>>{
+            Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()),
+          };
+          if (editMode == EditMode.pan) {
+            gestureRecognizers.addAll({
+              Factory<HorizontalDragGestureRecognizer>(() => HorizontalDragGestureRecognizer()),
+              Factory<ScaleGestureRecognizer>(() => ScaleGestureRecognizer()),
+            });
+          }
+
+          return PDFView(
+            key: _key,
+            filePath: pdfPath,
+            defaultPage: widget.defaultPage,
+            pageFling: false,
+            pageSnap: false,
+            autoSpacing: false,
+            preventLinkNavigation: true,
+            gestureRecognizers: gestureRecognizers,
+            onRender: widget.onRender,
+            onLoadComplete: widget.onLoadComplete,
+            onDraw: _handleOnDraw,
+            onError: _handleError,
+            onPageError: _handlePageError,
+            onViewCreated: _handleViewCreated,
+            onPageChanged: _handlePageChanged,
+          );
         },
-        onRender: widget.onRender,
-        onLoadComplete: widget.onLoadComplete,
-        onDraw: _handleOnDraw,
-        onError: _handleError,
-        onPageError: _handlePageError,
-        onViewCreated: _handleViewCreated,
-        onPageChanged: _handlePageChanged,
       );
     }
 

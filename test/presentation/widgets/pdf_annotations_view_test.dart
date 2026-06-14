@@ -90,7 +90,7 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(find.byType(DrawingOverlay), findsOneWidget);
 
-      verify(() => mockPdfViewController.setZoomLimits(1.0, 1.0, 1.0)).called(1);
+      verify(() => mockPdfViewController.setZoomLimits(1.0, 3.0, 5.0)).called(1);
       verify(() => mockPdfViewController.setPosition(any())).called(1);
     });
 

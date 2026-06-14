@@ -325,7 +325,7 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
   Future<void> _onRender(int? pages) async {
     if (!mounted || _pdfViewController == null) return;
 
-    _pdfViewController.setZoomLimits(1.0, 1.0, 1.0);
+    _pdfViewController.setZoomLimits(1.0, 3.0, 5.0);
     setState(() {
       _isProgressVisible = false;
     });
@@ -337,8 +337,9 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     }
 
     if (zoom == 0.0) {
-      return;
+      zoom = 1.0;
     }
+    _pluginState.pdfScaleNotifier.value = zoom;
     final pdfOffsetNormalised = Offset(0.0, widget.initialOffset.dy / zoom);
     _pluginState.pdfOffsetNotifier.value = pdfOffsetNormalised;
     await _pdfViewController.setPosition(pdfOffsetNormalised);
@@ -355,6 +356,9 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     if (_pluginState.pdfOffsetNotifier.value != position) {
       _pluginState.pdfOffsetNotifier.value = position;
       widget.onOffsetChanged?.call(position);
+    }
+    if (_pluginState.pdfScaleNotifier.value != scale) {
+      _pluginState.pdfScaleNotifier.value = scale;
     }
   }
 
