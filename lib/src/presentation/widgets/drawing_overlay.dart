@@ -86,6 +86,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   Offset _startOfTextEntryInsertionPoint = .zero;
   Offset _vpPositionAtStartOfPanning = .zero;
   Offset _vpPosition = .zero;
+  double _scaleAtStartOfPanning = 1.0;
   late double _devPixRatio;
   List<AddedAnnotation> _addedAnnotations = [];
   late final AnimationController _animationController;
@@ -164,6 +165,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     };
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _updateViewportPosition();
+      _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
       await _loadPreviousSave();
       _pluginState.updateUndoRedoEnabledState();
     });
@@ -175,12 +177,14 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     _pluginState = PluginStateProvider.of(context);
     _setAnnotationColour();
     _setLineWidth();
+    _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
 
     if (_didChangeDependenciesRun) {
       return;
     }
     _didChangeDependenciesRun = true;
-    _pluginState.pdfOffsetNotifier.addListener(_moveByPanning);
+    _pluginState.pdfOffsetNotifier.addListener(_onTransformChanged);
+    _pluginState.pdfScaleNotifier.addListener(_onTransformChanged);
     _pluginState.keyboardHeightNotifier.addListener(_keyboardHeightUpdate);
     _pluginState.annotationColourNotifier.addListener(_setAnnotationColour);
     _pluginState.lineModeNotifier.addListener(_setLineWidth);
@@ -202,7 +206,8 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
 
   @override
   void dispose() {
-    _pluginState.pdfOffsetNotifier.removeListener(_moveByPanning);
+    _pluginState.pdfOffsetNotifier.removeListener(_onTransformChanged);
+    _pluginState.pdfScaleNotifier.removeListener(_onTransformChanged);
     _pluginState.keyboardHeightNotifier.removeListener(_keyboardHeightUpdate);
     _pluginState.annotationColourNotifier.removeListener(_setAnnotationColour);
     _pluginState.lineModeNotifier.removeListener(_setLineWidth);
@@ -248,12 +253,43 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     _vpPosition = _vpPositionAtStartOfPanning = _pluginState.pdfOffsetNotifier.value;
   }
 
-  void _moveByPanning() {
+  void _onTransformChanged() {
     if (!_keyboardActive) {
-      _vpPosition = _pluginState.pdfOffsetNotifier.value;
-      final delta = _vpPosition - _vpPositionAtStartOfPanning;
-      _moveLineAnnotationsAbsolute(delta);
-      _moveTextAnnotationsAbsolute(delta);
+      final newVp = _pluginState.pdfOffsetNotifier.value;
+      final newScale = _pluginState.pdfScaleNotifier.value;
+      final currentScaleAtStart = _scaleAtStartOfPanning == 0.0 ? 1.0 : _scaleAtStartOfPanning;
+
+      if (_startOfPanningLines.isNotEmpty) {
+        final transformedLines = _startOfPanningLines.map((annotation) {
+          final transformedPoints = annotation.line.map((point) {
+            final pointPdf = (point - _vpPositionAtStartOfPanning) / currentScaleAtStart;
+            return (pointPdf * newScale) + newVp;
+          }).toList();
+          final newWidth = (annotation.width / currentScaleAtStart) * newScale;
+          return annotation.copyWith(line: transformedPoints, width: newWidth);
+        }).toList();
+        _pluginState.lineAnnotationsListNotifier.setAnnotations(transformedLines);
+      }
+
+      if (_startOfPanningTexts.isNotEmpty) {
+        final transformedTexts = _startOfPanningTexts.map((annotation) {
+          final coordPdf = (annotation.coordinate - _vpPositionAtStartOfPanning) / currentScaleAtStart;
+          final newCoord = (coordPdf * newScale) + newVp;
+          final sizePdf = annotation.renderedFontSize / currentScaleAtStart;
+          final newFontSize = sizePdf * newScale;
+          final pdfFontSizePdf = annotation.pdfFontSize / currentScaleAtStart;
+          final newPdfFontSize = pdfFontSizePdf * newScale;
+
+          return annotation.copyWith(
+            coordinate: newCoord,
+            renderedFontSize: newFontSize,
+            pdfFontSize: newPdfFontSize,
+          );
+        }).toList();
+        _pluginState.textAnnotationsListNotifier.setAnnotations(transformedTexts);
+      }
+
+      _vpPosition = newVp;
     }
   }
 
@@ -286,6 +322,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     _startOfPanningLines = _pluginState.lineAnnotationsListNotifier.value;
     _startOfPanningTexts = _pluginState.textAnnotationsListNotifier.value;
     _vpPositionAtStartOfPanning = _vpPosition;
+    _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
   }
 
   void _handleEditModeChange() {
@@ -462,17 +499,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     return completer.future;
   }
 
-  void _moveTextAnnotationsAbsolute(Offset absPoint) {
-    if (_startOfPanningTexts.isNotEmpty) {
-      final tempTexts = _startOfPanningTexts.map((annotation) {
-        final newCoord = _currentScale == 1.0
-            ? annotation.coordinate.translate(0, absPoint.dy)
-            : annotation.coordinate + absPoint;
-        return annotation.copyWith(coordinate: newCoord);
-      }).toList();
-      _pluginState.textAnnotationsListNotifier.setAnnotations(tempTexts);
-    }
-  }
+
 
   Future<void> _animateLineAnnotationsForKbShift(double begin, double end) {
     final Completer<void> completer = Completer<void>();
@@ -506,19 +533,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     return completer.future;
   }
 
-  void _moveLineAnnotationsAbsolute(Offset absPoint) {
-    if (_startOfPanningLines.isNotEmpty) {
-      _pluginState.lineAnnotationsListNotifier.setAnnotations(
-        _startOfPanningLines
-            .map(
-              (annotation) => annotation.copyWith(
-                line: annotation.line.map((offset) => offset + absPoint).toList(),
-              ),
-            )
-            .toList(),
-      );
-    }
-  }
+
 
   Future<void> _animateCurrentTextForKbShift(double begin, double end) {
     final Completer<void> completer = Completer<void>();

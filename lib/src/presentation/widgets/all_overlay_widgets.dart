@@ -34,7 +34,6 @@ class AllOverlayWidgets extends StatelessWidget {
         widgets.add(currentLine);
         break;
       case .pan:
-        widgets.add(panLayer);
         break;
     }
 
