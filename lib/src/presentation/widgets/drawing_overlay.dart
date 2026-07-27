@@ -279,53 +279,65 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     _vpPosition = _vpPositionAtStartOfPanning = _pluginState.pdfOffsetNotifier.value;
   }
 
+  /// Fired synchronously whenever [pdfOffsetNotifier] or [pdfScaleNotifier]
+  /// changes (scroll / zoom).  Both notifiers may update in the same [_onDraw]
+  /// call; because listeners fire synchronously the method runs twice, but
+  /// both invocations read from [_startOfPanningLines] (the original snapshot)
+  /// so the second call always produces the correct final result.
+  /// Flutter batches widget rebuilds, so only the correct final positions are
+  /// ever painted — no visible intermediate glitch occurs.
   void _onTransformChanged() {
-    if (!_keyboardActive) {
-      final newVp = _pluginState.pdfOffsetNotifier.value;
-      final newScale = _pluginState.pdfScaleNotifier.value;
-      final currentScaleAtStart = _scaleAtStartOfPanning == 0.0 ? 1.0 : _scaleAtStartOfPanning;
+    if (_keyboardActive) return;
 
-      if ((_startOfPanningLines.isEmpty && _pluginState.lineAnnotationsListNotifier.value.isNotEmpty) ||
-          _startOfPanningLines.length != _pluginState.lineAnnotationsListNotifier.value.length) {
-        _setInitialMoveConditions();
-      }
-      if ((_startOfPanningTexts.isEmpty && _pluginState.textAnnotationsListNotifier.value.isNotEmpty) ||
-          _startOfPanningTexts.length != _pluginState.textAnnotationsListNotifier.value.length) {
-        _setInitialMoveConditions();
-      }
+    final newVp = _pluginState.pdfOffsetNotifier.value;
+    final newScale = _pluginState.pdfScaleNotifier.value;
 
-      if (_startOfPanningLines.isNotEmpty) {
-        final transformedLines = _startOfPanningLines.map((annotation) {
-          final transformedPoints = annotation.line.map((point) {
-            final pointPdf = (point - _vpPositionAtStartOfPanning) / currentScaleAtStart;
-            return (pointPdf * newScale) + newVp;
-          }).toList();
-          final newWidth = (annotation.width / currentScaleAtStart) * newScale;
-          return annotation.copyWith(line: transformedPoints, width: newWidth);
-        }).toList();
-        _pluginState.lineAnnotationsListNotifier.setAnnotations(transformedLines);
-      }
-
-      if (_startOfPanningTexts.isNotEmpty) {
-        final transformedTexts = _startOfPanningTexts.map((annotation) {
-          final coordPdf = (annotation.coordinate - _vpPositionAtStartOfPanning) / currentScaleAtStart;
-          final newCoord = (coordPdf * newScale) + newVp;
-          final sizePdf = annotation.renderedFontSize / currentScaleAtStart;
-          final newFontSize = sizePdf * newScale;
-          final pdfFontSizePdf = annotation.pdfFontSize / currentScaleAtStart;
-          final newPdfFontSize = pdfFontSizePdf * newScale;
-
-          return annotation.copyWith(
-            coordinate: newCoord,
-            renderedFontSize: newFontSize,
-            pdfFontSize: newPdfFontSize,
-          );
-        }).toList();
-        _pluginState.textAnnotationsListNotifier.setAnnotations(transformedTexts);
-      }
-
-      _vpPosition = newVp;
+    // If the annotation list grew or shrank since the last snapshot, re-capture
+    // the start conditions NOW, before reading currentScaleAtStart, so that all
+    // four values (_startOfPanningLines, _vpPositionAtStartOfPanning,
+    // _scaleAtStartOfPanning, and currentScaleAtStart) remain consistent.
+    if ((_startOfPanningLines.isEmpty && _pluginState.lineAnnotationsListNotifier.value.isNotEmpty) ||
+        _startOfPanningLines.length != _pluginState.lineAnnotationsListNotifier.value.length ||
+        (_startOfPanningTexts.isEmpty && _pluginState.textAnnotationsListNotifier.value.isNotEmpty) ||
+        _startOfPanningTexts.length != _pluginState.textAnnotationsListNotifier.value.length) {
+      _setInitialMoveConditions();
     }
+
+    // Capture AFTER any re-snapshot so it is always consistent with
+    // _vpPositionAtStartOfPanning and _startOfPanning*.
+    final currentScaleAtStart = _scaleAtStartOfPanning == 0.0 ? 1.0 : _scaleAtStartOfPanning;
+
+    if (_startOfPanningLines.isNotEmpty) {
+      final transformedLines = _startOfPanningLines.map((annotation) {
+        final transformedPoints = annotation.line.map((point) {
+          final pointPdf = (point - _vpPositionAtStartOfPanning) / currentScaleAtStart;
+          return (pointPdf * newScale) + newVp;
+        }).toList();
+        final newWidth = (annotation.width / currentScaleAtStart) * newScale;
+        return annotation.copyWith(line: transformedPoints, width: newWidth);
+      }).toList();
+      _pluginState.lineAnnotationsListNotifier.setAnnotations(transformedLines);
+    }
+
+    if (_startOfPanningTexts.isNotEmpty) {
+      final transformedTexts = _startOfPanningTexts.map((annotation) {
+        final coordPdf = (annotation.coordinate - _vpPositionAtStartOfPanning) / currentScaleAtStart;
+        final newCoord = (coordPdf * newScale) + newVp;
+        final sizePdf = annotation.renderedFontSize / currentScaleAtStart;
+        final newFontSize = sizePdf * newScale;
+        final pdfFontSizePdf = annotation.pdfFontSize / currentScaleAtStart;
+        final newPdfFontSize = pdfFontSizePdf * newScale;
+
+        return annotation.copyWith(
+          coordinate: newCoord,
+          renderedFontSize: newFontSize,
+          pdfFontSize: newPdfFontSize,
+        );
+      }).toList();
+      _pluginState.textAnnotationsListNotifier.setAnnotations(transformedTexts);
+    }
+
+    _vpPosition = newVp;
   }
 
   Future<void> _keyboardHeightUpdate() async {
@@ -356,7 +368,10 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   void _setInitialMoveConditions() {
     _startOfPanningLines = List.from(_pluginState.lineAnnotationsListNotifier.value);
     _startOfPanningTexts = List.from(_pluginState.textAnnotationsListNotifier.value);
-    _vpPositionAtStartOfPanning = _vpPosition;
+    // Always read the live offset notifier here – _vpPosition may lag by one
+    // frame if this is called before the first _applyTransform fires.
+    _vpPositionAtStartOfPanning = _pluginState.pdfOffsetNotifier.value;
+    _vpPosition = _vpPositionAtStartOfPanning;
     _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
   }
 
@@ -424,7 +439,12 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   void _onLineScaleEnd(ScaleEndDetails details) {
     var currentAnnotation = _pluginState.currentLineAnnotationNotifier.value;
     _pluginState.resetCurrentLineAnnotationNotifier();
-    if (currentAnnotation.line.isNotEmpty) {
+    // Require at least 2 points: a single-point annotation is a phantom
+    // created when the first finger of a pinch-to-zoom gesture touches down
+    // before _onLineScaleStart returns. Adding it would change the list length
+    // mid-transform and force a premature _setInitialMoveConditions snapshot
+    // with inconsistent VP/scale values.
+    if (currentAnnotation.line.length > 1) {
       _pluginState.lineAnnotationsListNotifier.addAnnotation(currentAnnotation);
       _addedAnnotations.add(AddedAnnotation(kLineAnnotation, currentAnnotation.id));
       _setInitialMoveConditions();
@@ -538,9 +558,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     final original = annotations[originalIndex];
 
     // Create fragment annotations preserving the original style.
-    final fragments = fragmentPoints
-        .map((points) => LineAnnotation(points, original.colour, original.width))
-        .toList();
+    final fragments = fragmentPoints.map((points) => LineAnnotation(points, original.colour, original.width)).toList();
 
     // Inactivate the original stroke.
     _pluginState.lineAnnotationsListNotifier.inactivateId(originalId);
@@ -616,8 +634,6 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     return completer.future;
   }
 
-
-
   Future<void> _animateLineAnnotationsForKbShift(double begin, double end) {
     final Completer<void> completer = Completer<void>();
     if (_pluginState.lineAnnotationsListNotifier.value.isNotEmpty) {
@@ -649,8 +665,6 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     }
     return completer.future;
   }
-
-
 
   Future<void> _animateCurrentTextForKbShift(double begin, double end) {
     final Completer<void> completer = Completer<void>();
