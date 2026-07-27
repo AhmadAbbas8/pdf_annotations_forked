@@ -285,6 +285,15 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
       final newScale = _pluginState.pdfScaleNotifier.value;
       final currentScaleAtStart = _scaleAtStartOfPanning == 0.0 ? 1.0 : _scaleAtStartOfPanning;
 
+      if ((_startOfPanningLines.isEmpty && _pluginState.lineAnnotationsListNotifier.value.isNotEmpty) ||
+          _startOfPanningLines.length != _pluginState.lineAnnotationsListNotifier.value.length) {
+        _setInitialMoveConditions();
+      }
+      if ((_startOfPanningTexts.isEmpty && _pluginState.textAnnotationsListNotifier.value.isNotEmpty) ||
+          _startOfPanningTexts.length != _pluginState.textAnnotationsListNotifier.value.length) {
+        _setInitialMoveConditions();
+      }
+
       if (_startOfPanningLines.isNotEmpty) {
         final transformedLines = _startOfPanningLines.map((annotation) {
           final transformedPoints = annotation.line.map((point) {
@@ -327,17 +336,17 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
 
   void _setAnnotationColour() {
     _annotationColour = _pluginState.annotationColour;
-    if (_pluginState.editMode == .text && _currentTextAnnotation != null) {
+    if (_pluginState.editMode == EditMode.text && _currentTextAnnotation != null) {
       _currentTextAnnotation = _currentTextAnnotation?.copyWith(colour: _annotationColour);
     }
   }
 
   void _setLineWidth() {
-    _selectedLineWidth = _pluginState.lineModeNotifier.value == .pen ? 5.0 : 15.0;
+    _selectedLineWidth = _pluginState.lineModeNotifier.value == LineMode.pen ? 5.0 : 15.0;
   }
 
   void _updateTextInsertionPoint() {
-    if (_pluginState.editMode == .text && _currentTextAnnotation != null) {
+    if (_pluginState.editMode == EditMode.text && _currentTextAnnotation != null) {
       _currentTextAnnotation = _currentTextAnnotation?.copyWith(
         coordinate: _pluginState.textInsertionPoint,
       );
@@ -345,8 +354,8 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   }
 
   void _setInitialMoveConditions() {
-    _startOfPanningLines = _pluginState.lineAnnotationsListNotifier.value;
-    _startOfPanningTexts = _pluginState.textAnnotationsListNotifier.value;
+    _startOfPanningLines = List.from(_pluginState.lineAnnotationsListNotifier.value);
+    _startOfPanningTexts = List.from(_pluginState.textAnnotationsListNotifier.value);
     _vpPositionAtStartOfPanning = _vpPosition;
     _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
   }
@@ -729,8 +738,8 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
         type: lastActiveAnnotation.annotationType,
       );
       lastActiveAnnotation.isActive = false;
+      _setInitialMoveConditions();
       if (position != null && !_pluginState.textFocusNode.hasFocus) {
-        _setInitialMoveConditions();
         await _setPdfOffset(position);
       }
     }
@@ -762,8 +771,8 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
         type: firstInactiveAnnotation.annotationType,
       );
       firstInactiveAnnotation.isActive = true;
+      _setInitialMoveConditions();
       if (position != null && !_pluginState.textFocusNode.hasFocus) {
-        _setInitialMoveConditions();
         await _setPdfOffset(position);
       }
     }
@@ -800,6 +809,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
 
     if (result case Success(:final data)) {
       _addedAnnotations = data;
+      _setInitialMoveConditions();
     }
 
     return result;

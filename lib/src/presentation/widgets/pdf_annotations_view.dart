@@ -245,6 +245,16 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     });
   }
 
+  bool _isFirstRender = true;
+
+  @override
+  void didUpdateWidget(covariant PdfAnnotationsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.pdfPath != oldWidget.pdfPath) {
+      _isFirstRender = true;
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -341,21 +351,28 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     setState(() {
       _isProgressVisible = false;
     });
-    // reset the pdf offset in case the pdf on the live view was zoomed
-    var zoom = widget.pdfZoom;
 
-    if (zoom == 0.0) {
-      zoom = await _pdfViewController.getScale();
-    }
+    if (_isFirstRender) {
+      _isFirstRender = false;
+      // reset the pdf offset in case the pdf on the live view was zoomed
+      var zoom = widget.pdfZoom;
 
-    if (zoom == 0.0) {
-      zoom = 1.0;
+      if (zoom == 0.0) {
+        zoom = await _pdfViewController.getScale();
+      }
+
+      if (zoom == 0.0) {
+        zoom = 1.0;
+      }
+      _pluginState.pdfScaleNotifier.value = zoom;
+      final pdfOffsetNormalised = Offset(0.0, widget.initialOffset.dy / zoom);
+      _pluginState.pdfOffsetNotifier.value = pdfOffsetNormalised;
+      await _pdfViewController.setPosition(pdfOffsetNormalised);
+      widget.onOffsetChanged?.call(pdfOffsetNormalised);
+    } else {
+      final currentOffset = _pluginState.pdfOffsetNotifier.value;
+      await _pdfViewController.setPosition(currentOffset);
     }
-    _pluginState.pdfScaleNotifier.value = zoom;
-    final pdfOffsetNormalised = Offset(0.0, widget.initialOffset.dy / zoom);
-    _pluginState.pdfOffsetNotifier.value = pdfOffsetNormalised;
-    await _pdfViewController.setPosition(pdfOffsetNormalised);
-    widget.onOffsetChanged?.call(pdfOffsetNormalised);
   }
 
   Future<void> _onPageChanged(int page) async {
