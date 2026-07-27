@@ -140,15 +140,23 @@ class _EditPageState extends State<EditPage> {
   double _fontSize = 18.0;
   QualityValue _annotationQuality = .high;
   bool _toolsOpen = true;
+  int _currentPage = 0;
+  int _totalPages = 1;
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('PDF Annotations Example'),
+          title: Text(_totalPages > 1 ? 'PDF Annotations (${_currentPage + 1}/$_totalPages)' : 'PDF Annotations Example'),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.format_list_numbered),
+              tooltip: 'Go to Page',
+              onPressed: () => _showGoToPageDialog(context),
+            ),
             IconButton(
               icon: const Icon(Icons.undo),
               onPressed: () async => await _controller.undo(),
@@ -190,7 +198,14 @@ class _EditPageState extends State<EditPage> {
                     pdfZoom: widget.pdfZoom,
                     pdfAnnotationsViewController: _controller,
                     onAnnotationQualityChanged: _onAnnotationQualityChanged,
-                    onPageChanged: (page) => debugPrint('Page: $page'),
+                    onPageChanged: (page) async {
+                      final total = await _controller.getPageCount() ?? 1;
+                      setState(() {
+                        _currentPage = page;
+                        _totalPages = total;
+                      });
+                      debugPrint('Page: $page of $total');
+                    },
                     onError: (error) => debugPrint('Error: $error'),
                   ),
                   Positioned(top: 10, left: 10, child: _buildToolSection()),
@@ -239,6 +254,11 @@ class _EditPageState extends State<EditPage> {
                               icon: Icon(Icons.edit),
                             ),
                             ButtonSegment<EditMode>(
+                              value: .erase,
+                              label: Text('Erase'),
+                              icon: Icon(Icons.auto_fix_normal),
+                            ),
+                            ButtonSegment<EditMode>(
                               value: .text,
                               label: Text('Text'),
                               icon: Icon(Icons.text_fields),
@@ -260,7 +280,7 @@ class _EditPageState extends State<EditPage> {
                             }
                           },
                         ),
-                        _editMode == .draw
+                       _editMode == .draw
                             ? SegmentedButton<LineMode>(
                                 segments: <ButtonSegment<LineMode>>[
                                   ButtonSegment<LineMode>(value: .pen, label: const Text('Pen')),
@@ -334,4 +354,52 @@ class _EditPageState extends State<EditPage> {
       _annotationQuality = quality;
     });
   }
+
+  void _showGoToPageDialog(BuildContext context) async {
+    final total = await _controller.getPageCount() ?? 1;
+    if (!mounted || !context.mounted) return;
+    final pageTextController = TextEditingController(text: '${_currentPage + 1}');
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Go to Page'),
+          content: TextField(
+            controller: pageTextController,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Enter page (1 - $total)',
+              labelText: 'Page Number (1 - $total)',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final input = int.tryParse(pageTextController.text.trim());
+                if (input != null && input >= 1 && input <= total) {
+                  final targetIndex = input - 1;
+                  final navigator = Navigator.of(dialogContext);
+                  await _controller.setPage(targetIndex);
+                  if (mounted) {
+                    setState(() {
+                      _currentPage = targetIndex;
+                    });
+                  }
+                  navigator.pop();
+                }
+              },
+              child: const Text('Go'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+

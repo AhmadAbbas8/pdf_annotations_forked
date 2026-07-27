@@ -9,6 +9,7 @@ import 'pan_layer.dart';
 class AllOverlayWidgets extends StatelessWidget {
   final CurrentText currentText;
   final Widget currentLine;
+  final Widget eraserLayer;
   final PanLayer panLayer;
   final EditMode selectedEditMode;
 
@@ -16,6 +17,7 @@ class AllOverlayWidgets extends StatelessWidget {
     super.key,
     required this.currentText,
     required this.currentLine,
+    required this.eraserLayer,
     required this.panLayer,
     required this.selectedEditMode,
   });
@@ -35,11 +37,16 @@ class AllOverlayWidgets extends StatelessWidget {
         break;
       case .pan:
         break;
+      case .erase:
+        widgets.add(panLayer);
+        widgets.add(eraserLayer);
+        break;
     }
 
     return Stack(children: widgets);
   }
 }
+
 
 class AllTexts extends StatelessWidget {
   const AllTexts({super.key});

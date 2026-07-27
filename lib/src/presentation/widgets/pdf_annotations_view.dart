@@ -77,6 +77,15 @@ class PdfAnnotationsViewController {
   /// Returns true if registration was successful.
   late Future<bool> Function(List<PdfFont>) registerFonts;
 
+  /// Navigates directly to the specified 0-based page index.
+  late Future<bool?> Function(int pageIndex) setPage;
+
+  /// Gets the total number of pages in the PDF document.
+  late Future<int?> Function() getPageCount;
+
+  /// Gets the current 0-based page index.
+  late Future<int?> Function() getCurrentPage;
+
   /// Callback triggered when undo availability changes.
   void Function(bool isAvailable)? onUndoAvailabilityChanged;
 
@@ -220,6 +229,9 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     widget.pdfAnnotationsViewController.setFontSize = _setFontSize;
     widget.pdfAnnotationsViewController.setFontFamily = _setFontFamily;
     widget.pdfAnnotationsViewController.setPopInvoked = _setPopInvoked;
+    widget.pdfAnnotationsViewController.setPage = _setPage;
+    widget.pdfAnnotationsViewController.getPageCount = _getPageCount;
+    widget.pdfAnnotationsViewController.getCurrentPage = _getCurrentPage;
 
     _pluginState.textFieldShowingNotifier.addListener(_setTextFieldShowing);
     _pluginState.undoEnabledNotifier.addListener(_onUndoAvailabilityChanged);
@@ -446,6 +458,18 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     setState(() {
       _showExitProgress = true;
     });
+  }
+
+  Future<bool?> _setPage(int pageIndex) async {
+    return await _pdfViewController?.setPage(pageIndex);
+  }
+
+  Future<int?> _getPageCount() async {
+    return await _pdfViewController?.getPageCount();
+  }
+
+  Future<int?> _getCurrentPage() async {
+    return await _pdfViewController?.getCurrentPage();
   }
 
   Future<void> _onInsertionPointModified(double adjustedHeight) async {

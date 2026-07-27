@@ -4,6 +4,7 @@ import 'package:native_device_orientation/native_device_orientation.dart';
 const int kAnnotationsAnimationDuration = 300;
 const String kTextAnnotation = 'TextAnnotation';
 const String kLineAnnotation = 'LineAnnotation';
+const String kEraseOperation = 'EraseOperation';
 const String kPdfSuffix = '.pdf';
 const double kKeyboardToolbarHeight = 100.0;
 const double kHighlighterOpacity = 0.5;

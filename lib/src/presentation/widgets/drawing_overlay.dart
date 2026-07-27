@@ -9,9 +9,11 @@ import '../../domain/entities/text_annotation.dart';
 import '../../utilities/constants.dart';
 import '../../utilities/enums.dart';
 import '../../utilities/errors.dart';
+import '../../utilities/id_generator.dart';
 import 'all_overlay_widgets.dart';
 import 'current_line_renderer.dart';
 import 'current_text.dart';
+import 'eraser_overlay.dart';
 import 'pan_layer.dart';
 import 'pdf_doc_view.dart';
 
@@ -89,6 +91,10 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   double _scaleAtStartOfPanning = 1.0;
   late double _devPixRatio;
   List<AddedAnnotation> _addedAnnotations = [];
+
+  /// Maps an [AddedAnnotation.id] of type [kEraseOperation] to the original
+  /// annotation id and the fragment ids that replaced it. Used by undo/redo.
+  final Map<String, _SplitRecord> _splitRecords = {};
   late final AnimationController _animationController;
   late final CurvedAnimation _curvedAnimation;
   late Animation<double> _lineAnnotationsAnimation;
@@ -124,6 +130,25 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   );
 
   late final PanLayer _panLayer = PanLayer(gDKey: _rawGDKey, onDragStart: _onPanDragStart);
+
+  /// Built lazily; rebuilds whenever either line or text annotations change
+  /// so the eraser always sees the current state of both annotation lists.
+  Widget get _eraserLayer => ListenableBuilder(
+    listenable: Listenable.merge([
+      _pluginState.lineAnnotationsListNotifier,
+      _pluginState.textAnnotationsListNotifier,
+    ]),
+    builder: (context, _) {
+      return EraserOverlay(
+        lineAnnotations: _pluginState.lineAnnotationsListNotifier.value,
+        textAnnotations: _pluginState.textAnnotationsListNotifier.value,
+        onStrokeSplit: _onStrokeSplit,
+        onTextAnnotationErased: _onTextAnnotationErased,
+        onEraserSessionStart: _onEraserSessionStart,
+        onEraserSessionEnd: _onEraserSessionEnd,
+      );
+    },
+  );
 
   @override
   void initState() {
@@ -236,6 +261,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
             return AllOverlayWidgets(
               currentText: _currentText,
               currentLine: _currentLine,
+              eraserLayer: _eraserLayer,
               panLayer: _panLayer,
               selectedEditMode: currentEditMode,
             );
@@ -367,7 +393,16 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   void _clearUndoList() {
     _pluginState.lineAnnotationsListNotifier.removeInactiveAnnotations();
     _pluginState.textAnnotationsListNotifier.removeInactiveAnnotations();
+    // Collect ids of inactive erase records before removing them, so we can
+    // clean up the corresponding _splitRecords entries.
+    final removedIds = _addedAnnotations
+        .where((a) => !a.isActive && a.annotationType == kEraseOperation)
+        .map((a) => a.id)
+        .toSet();
     _addedAnnotations.removeWhere((annotation) => !annotation.isActive);
+    for (final id in removedIds) {
+      _splitRecords.remove(id);
+    }
   }
 
   void _onLineScaleUpdate(ScaleUpdateDetails details) {
@@ -465,6 +500,79 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
 
   void _onPanDragStart(DragStartDetails details) {
     _setInitialMoveConditions();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Eraser callbacks
+  // ---------------------------------------------------------------------------
+
+  void _onEraserSessionStart() {
+    // Clear the redo stack when a new erase session begins, exactly like
+    // the draw tool does when a new stroke begins.
+    _clearUndoList();
+  }
+
+  /// Called by [EraserOverlay] each time a stroke is (partially or fully)
+  /// erased during a drag.
+  ///
+  /// [originalId] identifies the stroke that was hit.
+  /// [fragmentPoints] contains the surviving point-groups; empty means the
+  /// stroke was fully erased.
+  ///
+  /// This creates new [LineAnnotation] objects for each surviving fragment,
+  /// inactivates the original, and records the operation so that undo/redo
+  /// work correctly — one undo step per erased stroke.
+  void _onStrokeSplit(String originalId, List<List<Offset>> fragmentPoints) {
+    final annotations = _pluginState.lineAnnotationsListNotifier.value;
+    final originalIndex = annotations.indexWhere((a) => a.id == originalId);
+    if (originalIndex == -1) return;
+    final original = annotations[originalIndex];
+
+    // Create fragment annotations preserving the original style.
+    final fragments = fragmentPoints
+        .map((points) => LineAnnotation(points, original.colour, original.width))
+        .toList();
+
+    // Inactivate the original stroke.
+    _pluginState.lineAnnotationsListNotifier.inactivateId(originalId);
+
+    // Add surviving fragments as new active annotations.
+    for (final fragment in fragments) {
+      _pluginState.lineAnnotationsListNotifier.addAnnotation(fragment);
+    }
+
+    // Record the split so undo/redo can reverse it atomically.
+    final entryId = generateId();
+    _splitRecords[entryId] = _SplitRecord(
+      originalId: originalId,
+      fragmentIds: fragments.map((f) => f.id).toList(),
+    );
+    _addedAnnotations.add(AddedAnnotation(kEraseOperation, entryId));
+
+    _setInitialMoveConditions();
+  }
+
+  /// Called when the eraser passes over a [TextAnnotation].
+  ///
+  /// Text annotations are erased whole-unit (no partial text splitting).
+  /// The annotation is inactivated and recorded in [_addedAnnotations] so
+  /// that undo/redo work exactly like undoing a typed text annotation.
+  void _onTextAnnotationErased(String textId) {
+    _pluginState.textAnnotationsListNotifier.inactivateId(textId);
+    // If this text was added in the current session it already has an entry;
+    // just flip its flag. Otherwise (loaded from file) create a new entry.
+    final existingIndex = _addedAnnotations.indexWhere((a) => a.id == textId);
+    if (existingIndex == -1) {
+      _addedAnnotations.add(AddedAnnotation(kTextAnnotation, textId, false));
+    } else {
+      _addedAnnotations[existingIndex].isActive = false;
+    }
+    _pluginState.updateUndoRedoEnabledState();
+    _setInitialMoveConditions();
+  }
+
+  void _onEraserSessionEnd() {
+    _pluginState.updateUndoRedoEnabledState();
   }
 
   Future<void> _animateTextAnnotationsForKbShift(double begin, double end) {
@@ -605,6 +713,15 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
         position = _pluginState.textAnnotationsListNotifier.inactivateId(lastActiveAnnotation.id);
       } else if (lastActiveAnnotation.annotationType == kLineAnnotation) {
         position = _pluginState.lineAnnotationsListNotifier.inactivateId(lastActiveAnnotation.id);
+      } else if (lastActiveAnnotation.annotationType == kEraseOperation) {
+        // Undo a partial erase: restore the original stroke and remove fragments.
+        final record = _splitRecords[lastActiveAnnotation.id];
+        if (record != null) {
+          position = _pluginState.lineAnnotationsListNotifier.activateId(record.originalId);
+          for (final fragId in record.fragmentIds) {
+            _pluginState.lineAnnotationsListNotifier.inactivateId(fragId);
+          }
+        }
       }
       _pluginState.updateUndoRedoEnabledState();
       _pluginState.lastUndoNotifier.value = (
@@ -629,6 +746,15 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
         position = _pluginState.textAnnotationsListNotifier.activateId(firstInactiveAnnotation.id);
       } else if (firstInactiveAnnotation.annotationType == kLineAnnotation) {
         position = _pluginState.lineAnnotationsListNotifier.activateId(firstInactiveAnnotation.id);
+      } else if (firstInactiveAnnotation.annotationType == kEraseOperation) {
+        // Redo a partial erase: re-apply the split (hide original, show fragments).
+        final record = _splitRecords[firstInactiveAnnotation.id];
+        if (record != null) {
+          position = _pluginState.lineAnnotationsListNotifier.inactivateId(record.originalId);
+          for (final fragId in record.fragmentIds) {
+            _pluginState.lineAnnotationsListNotifier.activateId(fragId);
+          }
+        }
       }
       _pluginState.updateUndoRedoEnabledState();
       _pluginState.lastRedoNotifier.value = (
@@ -694,4 +820,17 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
       addedAnnotations: _addedAnnotations,
     );
   }
+}
+
+/// Stores the data for one partial-erase event so that undo/redo can reverse
+/// or re-apply the split.
+///
+/// [originalId] is the id of the stroke that was erased (partially or fully).
+/// [fragmentIds] are the ids of the new shorter strokes that replaced it.
+/// An empty [fragmentIds] means the stroke was fully erased with no survivors.
+class _SplitRecord {
+  final String originalId;
+  final List<String> fragmentIds;
+
+  const _SplitRecord({required this.originalId, required this.fragmentIds});
 }

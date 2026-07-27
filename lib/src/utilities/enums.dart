@@ -15,6 +15,9 @@ enum EditMode {
 
   /// The mode for pdf panning and scrolling
   pan,
+
+  /// The mode for erasing drawn line annotations
+  erase,
 }
 
 enum LineMode {
