@@ -1,0 +1,11 @@
+CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/flutter_pdfview" "${PODS_CONFIGURATION_BUILD_DIR}/integration_test" "${PODS_CONFIGURATION_BUILD_DIR}/keyboard_height_plugin" "${PODS_CONFIGURATION_BUILD_DIR}/native_device_orientation" "${PODS_CONFIGURATION_BUILD_DIR}/pdf_annotations"
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/flutter_pdfview/flutter_pdfview.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/integration_test/integration_test.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/keyboard_height_plugin/keyboard_height_plugin.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/native_device_orientation/native_device_orientation.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/pdf_annotations/pdf_annotations.framework/Headers"
+OTHER_LDFLAGS = $(inherited) -framework "UIKit" -framework "flutter_pdfview" -framework "integration_test" -framework "keyboard_height_plugin" -framework "native_device_orientation" -framework "pdf_annotations"
+PODS_BUILD_DIR = ${BUILD_DIR}
+PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
+PODS_PODFILE_DIR_PATH = ${SRCROOT}/.
+PODS_ROOT = ${SRCROOT}/Pods
+PODS_XCFRAMEWORKS_BUILD_DIR = $(PODS_CONFIGURATION_BUILD_DIR)/XCFrameworkIntermediates
+USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES

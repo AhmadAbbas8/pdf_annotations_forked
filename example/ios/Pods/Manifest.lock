@@ -1,0 +1,46 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_pdfview (1.0.2):
+    - Flutter
+  - integration_test (0.0.1):
+    - Flutter
+  - keyboard_height_plugin (0.0.1):
+    - Flutter
+  - native_device_orientation (0.0.1):
+    - Flutter
+  - pdf_annotations (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_pdfview (from `.symlinks/plugins/flutter_pdfview/ios`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - keyboard_height_plugin (from `.symlinks/plugins/keyboard_height_plugin/ios`)
+  - native_device_orientation (from `.symlinks/plugins/native_device_orientation/ios`)
+  - pdf_annotations (from `.symlinks/plugins/pdf_annotations/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_pdfview:
+    :path: ".symlinks/plugins/flutter_pdfview/ios"
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+  keyboard_height_plugin:
+    :path: ".symlinks/plugins/keyboard_height_plugin/ios"
+  native_device_orientation:
+    :path: ".symlinks/plugins/native_device_orientation/ios"
+  pdf_annotations:
+    :path: ".symlinks/plugins/pdf_annotations/ios"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_pdfview: 4fbfbd0590f63153fbd492a54997c5e5be010458
+  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
+  keyboard_height_plugin: 3d9f368f16ac905a984fc9998347d972243928fa
+  native_device_orientation: f3ba5f2ddbab3deee23a5f6693b4f97b02dafea2
+  pdf_annotations: d3648cd3688f1ec9619ee716aae4d9d0b4e07296
+
+PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
+
+COCOAPODS: 1.16.2

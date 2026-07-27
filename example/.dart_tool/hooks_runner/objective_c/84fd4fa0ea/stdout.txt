@@ -1,0 +1,56 @@
+Running `(cd /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.3.0/; ANDROID_HOME=/Users/macbook/Library/Android/sdk TMPDIR=/var/folders/dz/nsmfpk450l73f7hwcvvfrnk80000gp/T/ ANDROID_NDK_ROOT=/Users/macbook/Library/Android/sdk/ndk/28.2.13676358 PATH=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Users/macbook/.antigravity-ide/antigravity-ide/bin:/Users/macbook/.node-v22.22.0/bin:/Users/macbook/.antigravity/antigravity/bin:/opt/homebrew/opt/openjdk@17/bin:/Users/macbook/.codeium/windsurf/bin:/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/macbook/dev/flutter/bin:/Users/macbook/Library/Android/sdk/platform-tools HOME=/Users/macbook ANDROID_NDK_HOME=/Users/macbook/Library/Android/sdk/ndk/28.2.13676358 /Users/macbook/dev/flutter/bin/cache/dart-sdk/bin/dart '--packages=/Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/package_config.json' '/Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/objective_c/84fd4fa0ea/hook.dill' '--config=/Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/objective_c/84fd4fa0ea/input.json' )`.
+INFO: 2026-07-27 17:00:41.147048: Running `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version`.
+
+INFO: 2026-07-27 17:00:41.364367: Running `/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --version`.
+
+INFO: 2026-07-27 17:00:41.395414: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/include/dart_api_dl.c -fpic -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-07-27 17:00:41.397253: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c.c -fpic -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o
+
+INFO: 2026-07-27 17:00:41.400746: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/protocol.m -fpic -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o
+
+NFO: 2026-07-27 17:00:41.400622: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/ns_number.m -fpic -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o
+
+ea/obj/src/objective_c.m.o
+
+INFO: 2026-07-27 17:00:41.401489: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.3.0/src/objective_c_bindings_generated.m -fpic -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-07-27 17:00:41.634841: 
+INFO: 2026-07-27 17:00:41.635057: 
+INFO: 2026-07-27 17:00:41.635114: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o
+
+INFO: 2026-07-27 17:00:41.635315: 
+INFO: 2026-07-27 17:00:41.635399: 
+INFO: 2026-07-27 17:00:41.635483: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-07-27 17:00:41.649171: 
+INFO: 2026-07-27 17:00:41.649220: 
+INFO: 2026-07-27 17:00:41.649232: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o
+
+INFO: 2026-07-27 17:00:41.654708: 
+INFO: 2026-07-27 17:00:41.654812: 
+INFO: 2026-07-27 17:00:41.654844: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o
+
+INFO: 2026-07-27 17:00:41.874470: 
+INFO: 2026-07-27 17:00:41.874814: 
+INFO: 2026-07-27 17:00:41.874867: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o
+
+INFO: 2026-07-27 17:00:41.887211: 
+INFO: 2026-07-27 17:00:41.887262: 
+INFO: 2026-07-27 17:00:41.887275: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o
+
+INFO: 2026-07-27 17:00:41.894112: 
+INFO: 2026-07-27 17:00:41.894151: 
+INFO: 2026-07-27 17:00:41.894161: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/input_stream_adapter.m.o
+
+INFO: 2026-07-27 17:00:41.906648: 
+INFO: 2026-07-27 17:00:41.906679: 
+INFO: 2026-07-27 17:00:41.906687: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-07-27 17:00:41.907117: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -shared -Wl,-encryptable -undefined dynamic_lookup -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios-simulator -mios-version-min=13 /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/include/dart_api_dl.c.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.c.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/input_stream_adapter.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/observer.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/ns_number.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/protocol.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/obj/src/objective_c_bindings_generated.m.o -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/objective_c.dylib
+
+INFO: 2026-07-27 17:00:42.038411: 
+INFO: 2026-07-27 17:00:42.038472: ld: warning: -undefined dynamic_lookup is deprecated on iOS-simulator
+
+INFO: 2026-07-27 17:00:42.038482: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/example/.dart_tool/hooks_runner/shared/objective_c/build/84fd4fa0ea/objective_c.dylib
+

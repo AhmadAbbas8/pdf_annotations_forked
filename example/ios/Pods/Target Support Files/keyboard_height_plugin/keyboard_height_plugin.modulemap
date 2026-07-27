@@ -1,0 +1,6 @@
+framework module keyboard_height_plugin {
+  umbrella header "keyboard_height_plugin-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,55 @@
+Running `(cd /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/; TMPDIR=/var/folders/dz/nsmfpk450l73f7hwcvvfrnk80000gp/T/ PATH=/Users/macbook/dev/flutter/bin:/Users/macbook/.gemini/antigravity-ide/bin:/Users/macbook/.antigravity-ide/antigravity-ide/bin:/Users/macbook/.antigravity-ide/antigravity-ide/bin:/Users/macbook/.antigravity-ide/antigravity-ide/bin:/Users/macbook/.antigravity-ide/antigravity-ide/bin:/Users/macbook/.antigravity-ide/antigravity-ide/bin:/Users/macbook/.antigravity-ide/antigravity-ide/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/Users/macbook/.antigravity/antigravity/bin:/opt/homebrew/opt/openjdk@17/bin:/Users/macbook/.codeium/windsurf/bin:/opt/homebrew/opt/ruby/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/macbook/dev/flutter/bin:/Users/macbook/Library/Android/sdk/platform-tools HOME=/Users/macbook /Users/macbook/dev/flutter/bin/cache/dart-sdk/bin/dart '--packages=/Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/package_config.json' '/Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/objective_c/7ad245dadc/hook.dill' '--config=/Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/objective_c/7ad245dadc/input.json' )`.
+INFO: 2026-06-14 20:46:47.840272: Using compiler /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang from BuildInput.cCompiler.cc.
+
+INFO: 2026-06-14 20:46:47.845105: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/src/include/dart_api_dl.c -fpic -gline-tables-only -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-06-14 20:46:47.846690: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/src/objective_c.c -fpic -gline-tables-only -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.c.o
+
+INFO: 2026-06-14 20:46:47.846884: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/src/input_stream_adapter.m -fpic -gline-tables-only -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/input_stream_adapter.m.o
+
+INFO: 2026-06-14 20:46:47.847003: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/src/objective_c.m -fpic -gline-tables-only -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.m.o
+
+INFO: 2026-06-14 20:46:47.847116: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/src/observer.m -fpic -gline-tables-only -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/observer.m.o
+
+INFO: 2026-06-14 20:46:47.847322: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/src/protocol.m -fpic -gline-tables-only -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/protocol.m.o
+
+
+
+INFO: 2026-06-14 20:46:47.847430: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 -x objective-c -fobjc-arc -c /Users/macbook/.pub-cache/hosted/pub.dev/objective_c-9.4.1/src/objective_c_bindings_generated.m -fpic -gline-tables-only -I src -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-06-14 20:46:48.113331: 
+INFO: 2026-06-14 20:46:48.113521: 
+INFO: 2026-06-14 20:46:48.113601: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.c.o
+
+INFO: 2026-06-14 20:46:48.114354: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/include/dart_api_dl.c.o
+
+INFO: 2026-06-14 20:46:48.115215: 
+INFO: 2026-06-14 20:46:48.115244: 
+INFO: 2026-06-14 20:46:48.115257: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/observer.m.o
+
+INFO: 2026-06-14 20:46:48.115609: 
+
+NFO: 2026-06-14 20:46:48.115701: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/protocol.m.o
+
+INFO: 2026-06-14 20:46:48.406977: 
+INFO: 2026-06-14 20:46:48.407025: 
+INFO: 2026-06-14 20:46:48.407037: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/ns_number.m.o
+
+INFO: 2026-06-14 20:46:48.417266: 
+INFO: 2026-06-14 20:46:48.417310: 
+INFO: 2026-06-14 20:46:48.417321: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.m.o
+
+INFO: 2026-06-14 20:46:48.419021: 
+INFO: 2026-06-14 20:46:48.419061: 
+INFO: 2026-06-14 20:46:48.419073: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/input_stream_adapter.m.o
+
+INFO: 2026-06-14 20:46:48.436855: 
+INFO: 2026-06-14 20:46:48.436888: 
+INFO: 2026-06-14 20:46:48.436910: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c_bindings_generated.m.o
+
+INFO: 2026-06-14 20:46:48.437213: Running: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -shared -Wl,-encryptable -undefined dynamic_lookup -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-darwin -mmacos-version-min=13 /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/include/dart_api_dl.c.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.c.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/input_stream_adapter.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/observer.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/ns_number.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/protocol.m.o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/obj/src/objective_c_bindings_generated.m.o -o /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/objective_c.dylib
+
+INFO: 2026-06-14 20:46:48.579480: 
+INFO: 2026-06-14 20:46:48.579601: 
+INFO: 2026-06-14 20:46:48.579617: Generated /Users/macbook/Desktop/Easy Tech/packages/pdf_annotations_forked/.dart_tool/hooks_runner/shared/objective_c/build/7ad245dadc/objective_c.dylib
+

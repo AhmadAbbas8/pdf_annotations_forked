@@ -1,0 +1,6 @@
+framework module pdf_annotations {
+  umbrella header "pdf_annotations-umbrella.h"
+
+  export *
+  module * { export * }
+}
