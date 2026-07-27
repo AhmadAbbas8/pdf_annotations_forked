@@ -1,4 +1,25 @@
-/example/build
-/example/.dart_tool
-/example/.dart_tool/flutter_build
-/example/.dart_tool
+# Flutter / Dart build files
+.dart_tool/
+build/
+example/.dart_tool/
+example/build/
+example/ios/Flutter/Generated.xcconfig
+example/ios/Flutter/app.dill
+example/ios/Flutter/ephemeral/
+example/ios/Flutter/flutter_export_environment.sh
+example/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# Xcode / iOS
+*.mode1v3
+*.mode2v3
+*.moved-aside
+*.pbxuser
+*.perspectivev3
+*.xcuserstate
+project.xcworkspace
+xcuserdata/
+Pods/
+
+# Android
+.gradle/
+local.properties
