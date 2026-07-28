@@ -389,6 +389,9 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     if (_pluginState.pdfScaleNotifier.value != scale) {
       _pluginState.pdfScaleNotifier.value = scale;
     }
+    // Notify DrawingOverlay that the native PDFView has reported a valid scroll
+    // position for the first time. This unblocks deferred annotation loading.
+    _drawingOverlayController.notifyFirstDrawComplete();
   }
 
   void _setTextFieldShowing() => widget.onTextFieldShowing?.call(_pluginState.textFieldShowingNotifier.value);
@@ -531,7 +534,6 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
     switch (saveResult) {
       case .fileDeleted:
         await _deleteBakedFile(widget.pdfPath);
-        _pdfDocViewController.setNewlyEdited();
         return true;
       case .fileCreated:
       case .fileUpdated:
@@ -542,9 +544,6 @@ class _PdfAnnotationsViewState extends State<PdfAnnotationsView> with SingleTick
           return false;
         }
         final successResult = (addToPdfResult as Success<bool>).data;
-        if (successResult) {
-          _pdfDocViewController.setNewlyEdited();
-        }
         return successResult;
       case .noChange:
         return false;

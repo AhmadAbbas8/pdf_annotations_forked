@@ -45,6 +45,13 @@ flutter:
     - assets/sample.pdf
 
   fonts:
+    - family: IBM_Plex_Sans_Arabic
+      fonts:
+        - asset: fonts/IBMPlexSansArabic-Regular.ttf
+        - asset: fonts/IBMPlexSansArabic-Medium.ttf
+          weight: 600
+        - asset: fonts/IBMPlexSansArabic-Bold.ttf
+          weight: 700
     - family: Courier Prime
       fonts:
         - asset: fonts/CourierPrime-Regular.ttf

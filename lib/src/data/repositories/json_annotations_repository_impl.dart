@@ -36,16 +36,16 @@ class JsonAnnotationsRepositoryImpl implements JsonAnnotationsRepository {
       return await _deleteSavedAnnotationsFile(pdfPath);
     }
 
-    final annotationMap = await _generateAnnotationMap(
-      vpPosition: vpPosition,
-      overlayWidthScaled: overlayWidthScaled,
-      textAnnotations: textAnnotations,
-      lineAnnotations: lineAnnotations,
-      addedAnnotations: addedAnnotations,
-      annotationQuality: annotationQuality,
-    );
-
     try {
+      final annotationMap = await _generateAnnotationMap(
+        vpPosition: vpPosition,
+        overlayWidthScaled: overlayWidthScaled,
+        textAnnotations: textAnnotations,
+        lineAnnotations: lineAnnotations,
+        addedAnnotations: addedAnnotations,
+        annotationQuality: annotationQuality,
+      );
+
       final savedAnnotationsFile = await _getSavedAnnotationsFile(pdfPath);
 
       final bool fileExisted = await savedAnnotationsFile.exists();
@@ -57,13 +57,13 @@ class JsonAnnotationsRepositoryImpl implements JsonAnnotationsRepository {
         }
       }
 
-      await savedAnnotationsFile.writeAsString(jsonEncode(annotationMap));
+      await savedAnnotationsFile.writeAsString(jsonEncode(annotationMap), flush: true);
 
       final SaveStateResult finalResult = fileExisted ? .fileUpdated : .fileCreated;
       return Success(finalResult);
     } catch (e, stack) {
       return Failure(
-        'Failed to save annotations to $pdfPath',
+        'Failed to save annotations to $pdfPath: $e',
         error: e,
         stackTrace: stack,
       );
@@ -113,10 +113,13 @@ class JsonAnnotationsRepositoryImpl implements JsonAnnotationsRepository {
   }
 
   Future<bool> _compareContents(File file, Map<String, dynamic> newAnnotations) async {
-    String fileContents = await file.readAsString();
-    Map<String, dynamic> fileJson = json.decode(fileContents);
-
-    return _isDeepEqual(fileJson, newAnnotations);
+    try {
+      String fileContents = await file.readAsString();
+      Map<String, dynamic> fileJson = json.decode(fileContents);
+      return _isDeepEqual(fileJson, newAnnotations);
+    } catch (_) {
+      return false;
+    }
   }
 
   bool _isDeepEqual(dynamic a, dynamic b) {
@@ -218,8 +221,14 @@ class JsonAnnotationsRepositoryImpl implements JsonAnnotationsRepository {
 
       final result = (lineAnnotations, textAnnotations, addedAnnotations, quality);
       return Success(result);
-    } catch (e, stack) {
-      return Failure('Failed to load annotations from $pdfPath', error: e, stackTrace: stack);
+    } catch (e) {
+      try {
+        final savedAnnotationsFile = await _getSavedAnnotationsFile(pdfPath);
+        if (await savedAnnotationsFile.exists()) {
+          await savedAnnotationsFile.delete();
+        }
+      } catch (_) {}
+      return Success((<LineAnnotation>[], <TextAnnotation>[], <AddedAnnotation>[], QualityValue.high));
     }
   }
 

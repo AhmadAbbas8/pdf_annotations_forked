@@ -41,6 +41,13 @@ class DrawingOverlayController extends ChangeNotifier {
     return _state?._overlayWidthScaled ?? 1.0;
   }
 
+  /// Called by [PdfAnnotationsView] after the first [_onDraw] callback fires,
+  /// meaning the native PDFView has established a valid scroll position.
+  /// This is the signal to safely load previously saved annotations.
+  void notifyFirstDrawComplete() {
+    _state?._onFirstDrawComplete();
+  }
+
   void _attach(_DrawingOverlayState state) {
     _state = state;
   }
@@ -87,7 +94,7 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   List<TextAnnotation> _startOfPanningTexts = [];
   Offset _startOfTextEntryInsertionPoint = .zero;
   Offset _vpPositionAtStartOfPanning = .zero;
-  Offset _vpPosition = .zero;
+  Offset get _vpPosition => _pluginState.pdfOffsetNotifier.value;
   double _scaleAtStartOfPanning = 1.0;
   late double _devPixRatio;
   List<AddedAnnotation> _addedAnnotations = [];
@@ -109,6 +116,8 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   TextAnnotation? _currentTextAnnotation;
   bool _didChangeDependenciesRun = false;
   late Color _annotationColour;
+  /// Guards against loading saved annotations more than once.
+  bool _hasLoadedSavedAnnotations = false;
 
   late final CurrentText _currentText = CurrentText(
     textFieldController: _textFieldController,
@@ -188,12 +197,12 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
             .toList(),
       );
     };
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _updateViewportPosition();
-      _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
-      await _loadPreviousSave();
-      _pluginState.updateUndoRedoEnabledState();
-    });
+    // NOTE: Do NOT load saved annotations here. The native PDFView has not yet
+    // emitted its real scroll position (_onDraw). Loading here would use
+    // vpPosition=(0,0) which causes all saved coordinates to be offset by the
+    // initial page scroll offset on reload.
+    // Instead, PdfAnnotationsView calls drawingOverlayController.notifyFirstDrawComplete()
+    // after the first real _onDraw, which triggers _onFirstDrawComplete() below.
   }
 
   @override
@@ -276,7 +285,21 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
   }
 
   void _updateViewportPosition() {
-    _vpPosition = _vpPositionAtStartOfPanning = _pluginState.pdfOffsetNotifier.value;
+    _vpPositionAtStartOfPanning = _pluginState.pdfOffsetNotifier.value;
+  }
+
+  /// Called (exactly once) by [DrawingOverlayController.notifyFirstDrawComplete]
+  /// after [PdfAnnotationsView] receives the first real [_onDraw] callback from
+  /// the native PDFView. At this point [pdfOffsetNotifier] holds the correct
+  /// initial scroll position so saved annotations can be safely loaded without
+  /// the coordinate-offset race condition.
+  Future<void> _onFirstDrawComplete() async {
+    if (_hasLoadedSavedAnnotations) return;
+    _hasLoadedSavedAnnotations = true;
+    _updateViewportPosition();
+    _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
+    await _loadPreviousSave();
+    _pluginState.updateUndoRedoEnabledState();
   }
 
   /// Fired synchronously whenever [pdfOffsetNotifier] or [pdfScaleNotifier]
@@ -336,8 +359,6 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
       }).toList();
       _pluginState.textAnnotationsListNotifier.setAnnotations(transformedTexts);
     }
-
-    _vpPosition = newVp;
   }
 
   Future<void> _keyboardHeightUpdate() async {
@@ -371,7 +392,6 @@ class _DrawingOverlayState extends State<DrawingOverlay> with SingleTickerProvid
     // Always read the live offset notifier here – _vpPosition may lag by one
     // frame if this is called before the first _applyTransform fires.
     _vpPositionAtStartOfPanning = _pluginState.pdfOffsetNotifier.value;
-    _vpPosition = _vpPositionAtStartOfPanning;
     _scaleAtStartOfPanning = _pluginState.pdfScaleNotifier.value;
   }
 
